@@ -1,78 +1,18 @@
-#pip install python-telegram-bot
-import telegram 
+from telegram.ext import Updater, CommandHandler
 
-import requests
+# Define a function to handle the /start command
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hello! I'm your Telegram bot.")
 
-import json
+# Create an instance of the Updater class with your bot token
+updater = Updater(token='6136893630:AAHh5KEpwZ2UABTc2OUWzNLNVDMhr3wWudo', use_context=True)
 
-from telegram.bot import Bot 
-
-bot = telegram.Bot(token='6136893630:AAHh5KEpwZ2UABTc2OUWzNLNVDMhr3wWudo') #Replace TOKEN with your token string
-
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-
-updater = Updater(token='6136893630:AAHh5KEpwZ2UABTc2OUWzNLNVDMhr3wWudo', use_context=True) #Replace TOKEN with your token string
+# Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
 
+# Register the start function as a handler for the /start command
+start_handler = CommandHandler('start', start)
+dispatcher.add_handler(start_handler)
 
-#hello world response
-def hello(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Hello, This is a telegram bot')
-
-#rest api hit and get data
-def summary(update, context):
-    response = requests.get('https://api.covid19api.com/summary')
-    if(response.status_code==200): #Everything went okay, we have the data
-        data = response.json()
-        print(data['Global'])
-        context.bot.send_message(chat_id=update.effective_chat.id, text=data['Global'])
-    else: #something went wrong
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Error, something went wrong.")
-
-corona_summary_handler = CommandHandler('summary', summary)
-dispatcher.add_handler(corona_summary_handler)
-
-
-#If hello comes to bot it will redirect to hello method
-
-hello_handler = CommandHandler('hello', hello)
-dispatcher.add_handler(hello_handler)
-
-
-
-
-def electronic(update, context):
-    response = requests.get('https://dummyjson.com/products/search?q=Laptop')
-    if(response.status_code==200): #Everything went okay, we have the data
-        data = response.json()
-        print(data['products'])
-        context.bot.send_message(chat_id=update.effective_chat.id, text=data['products'])
-    else: #something went wrong
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Error, something went wrong.")
-
-electronic_summary_handler = CommandHandler('electronic', electronic)
-dispatcher.add_handler(electronic_summary_handler)
-
-
-
-
-# For Commands 
-def fnc1(update, context):
-    bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="Welcome to the www.praveensingampalli.com ",
-        )
-start_value2=CommandHandler('start', fnc1)
-dispatcher.add_handler (start_value2)
-
-#adding more Command
-def fnc2(update, context):
-    bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="tutorial link: wwww.youtube.com/praveensingampalli ",
-        )
-start_value=CommandHandler('youtube', fnc2)
-dispatcher.add_handler (start_value)
-
-
+# Start the bot
 updater.start_polling()
